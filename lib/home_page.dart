@@ -12,6 +12,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final _channelName = TextEditingController();
   final _userId = TextEditingController();
+  final _receiverId = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +27,20 @@ class _HomePageState extends State<HomePage> {
               keyboardType: TextInputType.number,
               decoration: InputDecoration(
                   hintText: "User Id",
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(
+                        6,
+                      ),
+                      borderSide: BorderSide(color: Colors.black))),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: _receiverId,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                  hintText: "Receiver Id",
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(
                         6,
@@ -53,13 +68,17 @@ class _HomePageState extends State<HomePage> {
               var statusMic = await Permission.microphone.status;
 
               debugPrint(
-                "User Id ${_userId.text} , Channel Name ${_channelName.text}, Camera Status $statusCamera Microphone Status $statusMic",
+                "User Id ${_userId.text} , Receiver Id ${_receiverId.text} Channel Name ${_channelName.text}, Camera Status $statusCamera Microphone Status $statusMic",
               );
               if (statusCamera.isDenied || statusMic.isDenied) {
                 debugPrint("Please enable camera or mic permission");
               } else {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => VideoScreen()));
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => VideoScreen(
+                          user_id: _userId.text,
+                          channel_name: _channelName.text,
+                          receiver_id: _receiverId.text,
+                        )));
               }
             },
             child: Text("JOIN"),

@@ -1,3 +1,4 @@
+import 'package:agora_user/video_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -48,8 +49,18 @@ class _HomePageState extends State<HomePage> {
           ElevatedButton(
             onPressed: () async {
               await [Permission.camera, Permission.microphone].request();
+              var statusCamera = await Permission.camera.status;
+              var statusMic = await Permission.microphone.status;
+
               debugPrint(
-                  "User Id ${_userId.text} , Channel Name ${_channelName.text}");
+                "User Id ${_userId.text} , Channel Name ${_channelName.text}, Camera Status $statusCamera Microphone Status $statusMic",
+              );
+              if (statusCamera.isDenied || statusMic.isDenied) {
+                debugPrint("Please enable camera or mic permission");
+              } else {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => VideoScreen()));
+              }
             },
             child: Text("JOIN"),
           ),

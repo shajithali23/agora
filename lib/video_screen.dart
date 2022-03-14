@@ -6,6 +6,7 @@ import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
 import 'package:agora_user/controller/network_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:wakelock/wakelock.dart';
 
 const APP_ID = 'ce2f97e3020246f9a8b7597848c494a4';
 const Token =
@@ -31,12 +32,14 @@ class _VideoScreenState extends State<VideoScreen> {
 
   bool _joined = false;
   bool _switch = false;
+  bool mute = false;
   int _remoteUid = 0;
   late RtcEngine engine;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    Wakelock.enable();
     initPlatformState();
   }
 
@@ -96,7 +99,7 @@ class _VideoScreenState extends State<VideoScreen> {
     _remoteUid = 0;
     engine.leaveChannel();
     engine.destroy();
-
+    Wakelock.disable();
     debugPrint("DIS");
   }
 
@@ -137,9 +140,17 @@ class _VideoScreenState extends State<VideoScreen> {
                                 RawMaterialButton(
                                   shape: CircleBorder(),
                                   elevation: 2,
-                                  fillColor: Colors.blueGrey,
-                                  onPressed: () {},
-                                  child: Icon(Icons.mic),
+                                  fillColor:
+                                      mute ? Colors.red : Colors.blueGrey,
+                                  onPressed: () {
+                                    setState(() {
+                                      mute = !mute;
+                                    });
+                                    engine.muteLocalAudioStream(mute);
+                                  },
+                                  child: mute
+                                      ? Icon(Icons.mic_off)
+                                      : Icon(Icons.mic),
                                 ),
                                 RawMaterialButton(
                                   shape: CircleBorder(),

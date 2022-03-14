@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 
 const APP_ID = 'ce2f97e3020246f9a8b7597848c494a4';
 const Token =
-    '006ce2f97e3020246f9a8b7597848c494a4IABgv/p/HhbSxQvLx5tUEVWlTwdAKE8IyFh6Iqdsll9DbAx+f9gAAAAAEAAJCiqYurQtYgEAAQC4tC1i';
+    '006ce2f97e3020246f9a8b7597848c494a4IABsuhOqbdAEvEJZmxMPgDS1Tc23yuWy4NzbDYVrRee7gwx+f9gAAAAAEADAxvLa6SQwYgEAAQDoJDBi';
 
 class VideoScreen extends StatefulWidget {
   String user_id;
@@ -116,7 +116,7 @@ class _VideoScreenState extends State<VideoScreen> {
                         width: MediaQuery.of(context).size.width,
                         height: MediaQuery.of(context).size.height,
                         color: Colors.amber,
-                        child: _remoteUid != 0
+                        child: _remoteUid != 0 || _remoteUid != widget.user_id
                             ? RtcRemoteView.SurfaceView(
                                 uid: int.parse(widget.receiver_id),
                                 channelId: widget.channel_name,

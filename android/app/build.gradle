@@ -50,6 +50,7 @@ android {
         applicationId "com.example.agora_user"
         minSdkVersion 24
         targetSdkVersion flutter.targetSdkVersion
+        multiDexEnabled true
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }

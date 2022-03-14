@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:agora_rtc_engine/rtc_local_view.dart' as RtcLocalView;
 import 'package:agora_rtc_engine/rtc_remote_view.dart' as RtcRemoteView;
+import 'package:agora_user/controller/network_manager.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 const APP_ID = 'ce2f97e3020246f9a8b7597848c494a4';
 const Token =
@@ -25,6 +27,8 @@ class VideoScreen extends StatefulWidget {
 }
 
 class _VideoScreenState extends State<VideoScreen> {
+  final NetworkManager _networkManager = Get.find<NetworkManager>();
+
   bool _joined = false;
   bool _switch = false;
   int _remoteUid = 0;
@@ -100,63 +104,70 @@ class _VideoScreenState extends State<VideoScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Container(
-          child: Stack(
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                color: Colors.amber,
-                child: _remoteUid != 0
-                    ? RtcRemoteView.SurfaceView(
-                        uid: int.parse(widget.receiver_id),
-                        channelId: widget.channel_name,
+        body: GetBuilder<NetworkManager>(builder: (builder) {
+          return _networkManager.connectionType == 0
+              ? Container(
+                  child: Center(child: Text("No Internet")),
+                )
+              : Container(
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height,
+                        color: Colors.amber,
+                        child: _remoteUid != 0
+                            ? RtcRemoteView.SurfaceView(
+                                uid: int.parse(widget.receiver_id),
+                                channelId: widget.channel_name,
+                              )
+                            : Center(
+                                child: CircularProgressIndicator(
+                                    color: Colors.green)),
+                      ),
+                      LocalViewWidget(),
+                      Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Container(
+                          margin: EdgeInsets.only(bottom: 26),
+                          width: MediaQuery.of(context).size.width,
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                RawMaterialButton(
+                                  shape: CircleBorder(),
+                                  elevation: 2,
+                                  fillColor: Colors.blueGrey,
+                                  onPressed: () {},
+                                  child: Icon(Icons.mic),
+                                ),
+                                RawMaterialButton(
+                                  shape: CircleBorder(),
+                                  elevation: 2,
+                                  fillColor: Colors.red,
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  constraints: BoxConstraints(
+                                      minWidth: 100.0, minHeight: 56.0),
+                                  child: Icon(Icons.call),
+                                ),
+                                RawMaterialButton(
+                                  shape: CircleBorder(),
+                                  elevation: 2,
+                                  fillColor: Colors.blueGrey,
+                                  onPressed: () {
+                                    engine.switchCamera();
+                                  },
+                                  child: Icon(Icons.switch_camera),
+                                ),
+                              ]),
+                        ),
                       )
-                    : Center(
-                        child: CircularProgressIndicator(color: Colors.green)),
-              ),
-              LocalViewWidget(),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  margin: EdgeInsets.only(bottom: 26),
-                  width: MediaQuery.of(context).size.width,
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        RawMaterialButton(
-                          shape: CircleBorder(),
-                          elevation: 2,
-                          fillColor: Colors.blueGrey,
-                          onPressed: () {},
-                          child: Icon(Icons.mic),
-                        ),
-                        RawMaterialButton(
-                          shape: CircleBorder(),
-                          elevation: 2,
-                          fillColor: Colors.red,
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          constraints:
-                              BoxConstraints(minWidth: 100.0, minHeight: 56.0),
-                          child: Icon(Icons.call),
-                        ),
-                        RawMaterialButton(
-                          shape: CircleBorder(),
-                          elevation: 2,
-                          fillColor: Colors.blueGrey,
-                          onPressed: () {
-                            engine.switchCamera();
-                          },
-                          child: Icon(Icons.switch_camera),
-                        ),
-                      ]),
-                ),
-              )
-            ],
-          ),
-        ),
+                    ],
+                  ),
+                );
+        }),
       ),
     );
   }
